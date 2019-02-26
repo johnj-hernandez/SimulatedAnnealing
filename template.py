@@ -1,5 +1,5 @@
 #el algoritmo tambien me dira desde donde es mejor empezar
-
+#el problema debe ser el paso por referencia/valor
 import string, math,random
 
 def distancesFromCoords():
@@ -77,9 +77,9 @@ def PartialSimulatedAnnealing(initialSolution,adjMatrix,temper,alpha):
 
 def SimulatedAnnealing(initialSolution,adjMatrix,initialTem,finalTemp,alpha):
     while finalTemp<initialTem:
-        PartialSimulatedAnnealing(initialSolution,adjMatrix,initialTem,alpha)
-    print("the chosen path is: "+initialSolution)
-    print("the final distance is: "+calculateZ(initialSolution,adjMatrix))
+        initialTem=PartialSimulatedAnnealing(initialSolution,adjMatrix,initialTem,alpha)
+    print("the chosen path is: ",initialSolution)
+    print("the final distance is: ",calculateZ(initialSolution,adjMatrix))
 
 tempI=100
 tempF=10
