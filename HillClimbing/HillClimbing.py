@@ -89,6 +89,9 @@ def SimulatedAnnealing(initialSolution,adjMatrix,initialTem,finalTemp,alpha):
     initialSolution.append(initialSolution[0])
     print("the chosen path is: ",initialSolution)
     print("the final distance is: ",calculateZ(initialSolution,adjMatrix))
+    randomYCoordinates=[i for i in range(100)]
+    plt.plot(initialSolution)
+    plt.show()
 
 
 
@@ -97,6 +100,7 @@ tempF=1
 alpha=0.99
 matrix= distancesFromCoords()
 solution=generateInitialSolution(100)
+print(solution)
 
 SimulatedAnnealing(solution,matrix,tempI,tempF,alpha)
 
