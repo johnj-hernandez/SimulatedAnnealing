@@ -1,6 +1,4 @@
-#el algoritmo tambien me dira desde donde es mejor empezar
-#el problema debe ser el paso por referencia/valor
-import string, math,random,matplotlib.pyplot as plt
+import string, math,random
 
 def distancesFromCoords():
     f = open('kroA100.tsp')
@@ -29,19 +27,6 @@ def calculateZ(myList,distances):
     sum=sum+distances[fromCity][toCity]
     return sum
 
-
-def evaluateChangeWithProb(temper,delta):
-    ran=random.random()
-    prob=math.exp(-delta/temper)
-    #print("delta",delta)
-    if prob>ran:
-       # print("True",prob,ran)
-        return True
-    else:
-        #print("False",prob,ran)
-        return False
-
-
 def generateInitialSolution(nCities):
     list1=[i for i in range(100)]
     list2=[]
@@ -61,46 +46,39 @@ def disturb(citiesList):
     #print("PERTURBADA",disturb)
     return disturb
 
-def PartialSimulatedAnnealing(initialSolution,adjMatrix,temper,alpha):
+def partialHillClimbing(initialSolution,adjMatrix):
     initial=initialSolution
     possible=disturb(initialSolution)
     zi=calculateZ(initial,adjMatrix)
     zp=calculateZ(possible,adjMatrix)
-    if zp<zi:
-        temper=temper*alpha
+    improvement=False
+    if zp<=zi:
         initial=possible[:]
-        #print("Mejora=",zp-zi)
-
+        improvement=True
     else:
-        delta=zp-zi
-        if evaluateChangeWithProb(temper,delta):
-            temper=temper*alpha
-            initial=possible[:]
-   # print(initial,possible)
-    return initial,temper
+        improvement=False
+    return initial,improvement
 
-def SimulatedAnnealing(initialSolution,adjMatrix,initialTem,finalTemp,alpha):
+
+def hillClimbing(initialSolution,adjMatrix):
     iteraciones=0
-    while finalTemp<initialTem:
-        initialSolution,initialTem=PartialSimulatedAnnealing(initialSolution,adjMatrix,initialTem,alpha)
-        #print(initialTem) con esto veo que siga avanzando
+    improvement=True
+    while improvement:
+        initialSolution,improvement=partialHillClimbing(initialSolution,adjMatrix)
         iteraciones+=1
-    print("Numero de iteraciones: ",iteraciones)
+    print("Number of iterations: ",iteraciones)
     initialSolution.append(initialSolution[0])
     print("the chosen path is: ",initialSolution)
     print("the final distance is: ",calculateZ(initialSolution,adjMatrix))
-    randomYCoordinates=[i for i in range(100)]
-    plt.plot(initialSolution)
-    plt.show()
 
+def printInitial(initial,distances):
+    i=initial[:]
+    i.append(initial[0])
+    print("Initial Solution: ",i)
+    print("Initial Distance: ",calculateZ(initial,distances))
 
-
-tempI=1000000000000
-tempF=1
-alpha=0.99
 matrix= distancesFromCoords()
 solution=generateInitialSolution(100)
-print(solution)
-
-SimulatedAnnealing(solution,matrix,tempI,tempF,alpha)
+printInitial(solution,matrix)
+hillClimbing(solution,matrix)
 
