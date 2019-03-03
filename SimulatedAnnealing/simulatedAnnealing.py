@@ -88,7 +88,7 @@ def printInitial(initial,distances):
 
 tempI=10000
 tempF=1
-alpha=0.9999
+alpha=0.999
 matrix= distancesFromCoords()
 solution=generateInitialSolution(100)
 printInitial(solution,matrix)

@@ -47,16 +47,24 @@ def disturb(citiesList):
     return disturb
 
 def partialHillClimbing(initialSolution,adjMatrix):
+    #para adaptarlo al problema haremos que compare con 5 posibles soluciones
+    #para evaluar si se actualiza o no la solucion
     initial=initialSolution
-    possible=disturb(initialSolution)
     zi=calculateZ(initial,adjMatrix)
-    zp=calculateZ(possible,adjMatrix)
     improvement=False
-    if zp<=zi:
-        initial=possible[:]
-        improvement=True
-    else:
-        improvement=False
+    count=int(len(initialSolution)) #se comparara con n posibles soluciones
+    #siendo n igual al tamaño del vector de ciudades, en este caso 100.
+    while count>0:
+        possible=disturb(initialSolution)
+        zp=calculateZ(possible,adjMatrix)
+        if zp<=zi:
+            initial=possible[:]
+            improvement=True
+            count=0
+        else:
+            improvement=False
+            count=count-1
+
     return initial,improvement
 
 
