@@ -1,6 +1,6 @@
 #el algoritmo tambien me dira desde donde es mejor empezar
 #el problema debe ser el paso por referencia/valor
-import string, math,random
+import string, math,random,matplotlib.pyplot as plt
 
 def distancesFromCoords():
     f = open('kroA100.tsp')
@@ -33,9 +33,12 @@ def calculateZ(myList,distances):
 def evaluateChangeWithProb(temper,delta):
     ran=random.random()
     prob=math.exp(-delta/temper)
+    #print("delta",delta)
     if prob>ran:
+       # print("True",prob,ran)
         return True
     else:
+        #print("False",prob,ran)
         return False
 
 
@@ -43,47 +46,52 @@ def generateInitialSolution(nCities):
     return [i for i in range(100)]
 
 def disturb(citiesList):
+    disturb=citiesList[:]
     rand1=random.randint(0,99)
     rand2=random.randint(0,99)
-    temp1=citiesList[rand1]
-    citiesList[rand1]=citiesList[rand2]
-    citiesList[rand2]=temp1
-    return citiesList
-
-
-def compareSolutions(initial,possible,adjMatrix):
-    zi=calculateZ(initial,adjMatrix)
-    zp=calculateZ(possible,adjMatrix)
-
-    if(zp<zi):
-        return True
-    else:
-        return False
-
+    temp1=disturb[rand1]
+    disturb[rand1]=disturb[rand2]
+    disturb[rand2]=temp1
+    #print("listaINICIAL",citiesList)
+    #print("PERTURBADA",disturb)
+    return disturb
 
 def PartialSimulatedAnnealing(initialSolution,adjMatrix,temper,alpha):
     initial=initialSolution
     possible=disturb(initialSolution)
-
-    if compareSolutions(initial,possible,adjMatrix):
+    zi=calculateZ(initial,adjMatrix)
+    zp=calculateZ(possible,adjMatrix)
+    if zp<zi:
         temper=temper*alpha
+        initial=possible[:]
+        #print("Mejora=",zp-zi)
+
     else:
-        delta=calculateZ(possible,adjMatrix)-calculateZ(initial,adjMatrix)
+        delta=zp-zi
         if evaluateChangeWithProb(temper,delta):
             temper=temper*alpha
-        else:
-            initialSolution=initial
-    return temper
+            initial=possible[:]
+   # print(initial,possible)
+    return initial,temper
 
 def SimulatedAnnealing(initialSolution,adjMatrix,initialTem,finalTemp,alpha):
+    iteraciones=0
     while finalTemp<initialTem:
-        initialTem=PartialSimulatedAnnealing(initialSolution,adjMatrix,initialTem,alpha)
+        initialSolution,initialTem=PartialSimulatedAnnealing(initialSolution,adjMatrix,initialTem,alpha)
+        #print(initialTem) con esto veo que siga avanzando
+        iteraciones+=1
+    print("Numero de iteraciones: ",iteraciones)
     print("the chosen path is: ",initialSolution)
     print("the final distance is: ",calculateZ(initialSolution,adjMatrix))
+    randomYCoordinates=[i for i in range(100)]
+    plt.plot(initialSolution)
+    plt.show()
 
-tempI=100
-tempF=10
-alpha=0.8
+
+
+tempI=1000000000000
+tempF=1
+alpha=0.99
 matrix= distancesFromCoords()
 solution=generateInitialSolution(100)
 
